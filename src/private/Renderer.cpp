@@ -71,35 +71,35 @@ void Renderer::drawPostmen(sf::RenderWindow& window, const World& world) {
         highlightPostmansPath(window, world, postman);
         sf::CircleShape shape(Config::POSTMAN_RADIUS);
         shape.setOrigin({Config::POSTMAN_RADIUS, Config::POSTMAN_RADIUS});
-        shape.setPosition(postman.position);
-        shape.setFillColor(sf::Color::Red);
+        shape.setPosition(postman.getPosition());
+        shape.setFillColor(postman.getColor());
         window.draw(shape);
     }
 }
 
 void Renderer::highlightPostmansPath(sf::RenderWindow &window, const World &world, const Postman &postman)
 {
-    auto& path = postman.route;
+    const auto& path = postman.getRoute();
     if(path.empty()) { return; }
 
-    for(size_t i = 0; i<path.size()-1; i++) {
+    for(size_t i = 0; i+1<path.size(); i++) {
         const int cityFrom = path[i];
         const int cityTo = path[i+1];
         const auto& from = world.getCityPosition(cityFrom);
         const auto& to = world.getCityPosition(cityTo);
-        drawRoad(window, from, to, sf::Color::Red);
+        drawRoad(window, from, to, postman.getColor());
 
     }
-    const int& targetCity = postman.route.back();
-    highlightDestinationCity(window, world.getCityPosition(targetCity));
+    int targetCity = postman.getTargetCity();
+    highlightDestinationCity(window, world.getCityPosition(targetCity), postman.getColor());
 }
 
-void Renderer::highlightDestinationCity(sf::RenderWindow& window, const sf::Vector2f& position) {
+void Renderer::highlightDestinationCity(sf::RenderWindow& window, const sf::Vector2f& position, const sf::Color& postmansColor) {
         sf::CircleShape shape(Config::CITY_RADIUS);
         shape.setOrigin({Config::CITY_RADIUS, Config::CITY_RADIUS});
         shape.setPosition(position);
-        shape.setFillColor(sf::Color::Green);
-        shape.setOutlineColor(sf::Color::Red);
+        shape.setFillColor(sf::Color::Magenta);
+        shape.setOutlineColor(postmansColor);
         shape.setOutlineThickness(Config::DEST_CITY_OUTLINE);
         window.draw(shape);
 }

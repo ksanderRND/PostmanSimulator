@@ -6,8 +6,6 @@ Pathfinding visualization built with C++17 and SFML 2.6. A postman navigates a c
 
 - **Navigator module** — extract pathfinding from `World` into a dedicated class with a strategy interface
 - **Additional algorithms** — BFS, DFS, and A* as pathfinding strategies
-- **Multiple postmen** — per-postman color, spawn multiple agents on the map
-- **Stronger data model** — encapsulate City, Road, Postman with proper invariants
 - **Map loading** — read city/road layouts from file instead of hardcoded test data
 
 ## Third-party assets

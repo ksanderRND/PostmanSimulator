@@ -4,6 +4,7 @@
 #include <limits>
 #include <queue>
 #include <iostream>
+#include <algorithm>
 
 constexpr int NO_PARENT = -1;
 
@@ -24,14 +25,14 @@ void World::addRoad(int fromId, int toId)
         if (road.toCityId == toId) return;
     }
 
-    float dist = distance(cities[fromId].position, cities[toId].position);
+    float dist = distance(cities[fromId].getPosition(), cities[toId].getPosition());
     roads[fromId].push_back({toId, dist});
     roads[toId].push_back({fromId, dist});
 }
 
-void World::addPostman(const Postman &postman)
+void World::addPostman(Postman::PColor color, sf::Vector2f startPosition)
 {
-    postmen.push_back(postman);
+    postmen.push_back({color, startPosition});
 }
 
 std::vector<int> World::getRouteDijkstra (int fromId, int toId)
@@ -147,10 +148,6 @@ void World::initializeWithTestSample()
     // Shortcut bypassing left cluster
     addRoad(0, 3);
 
-
-
-    Postman postman;
-    postman.position = cities[0].position;
-    postman.speed = Config::DEFAULT_POSTMAN_SPEED;
-    postmen.push_back(postman);
+    addPostman(Postman::PColor::Blue, cities[0].getPosition());
+    addPostman(Postman::PColor::Green, cities[0].getPosition());
 }

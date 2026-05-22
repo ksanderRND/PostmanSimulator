@@ -6,7 +6,7 @@
 
 Simulation::Simulation(World &world): 
     world(world), 
-    rng(static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count())) {}
+    rng(std::random_device{}()) {}
 
 
 void Simulation::update(float dt)
@@ -18,45 +18,26 @@ void Simulation::update(float dt)
 
 void Simulation::updatePostman(Postman& postman, float dt) {
 
-    if (postman.route.empty() || postman.currentWaypointIndex >= postman.route.size() ) {
+    if( postman.hasEmptyRoute() || postman.isRouteComplete() ) {
         givePostmanNextRoute(postman);
         return;
     }
 
-    int waypointId = postman.route[postman.currentWaypointIndex];
-    moveTowards(postman, world.getCityPosition(waypointId), dt);
-}
-
-void Simulation::moveTowards(Postman& postman, sf::Vector2f target, float dt) {
-
-    float dist = distance(postman.position, target);
-    if (dist < Config::SNAP_DISTANCE) {
-        postman.position = target;
-        postman.currentWaypointIndex++;
-        return;
-    }
-
-    sf::Vector2f direction = (target - postman.position)/dist;
-    float step = postman.speed * dt;
-    if (step >= dist) {
-        postman.position = target;
-        postman.currentWaypointIndex++;
-    } else {
-        postman.position += direction * step;
-    }
+    int waypointId = postman.getCurrentWaypointId();
+    postman.moveTowards(world.getCityPosition(waypointId), dt);
 }
 
 void Simulation::givePostmanNextRoute(Postman& postman) {
-    int currentTargetId = postman.route.empty() ? 0 : postman.route.back();
+    int currentTargetId = postman.getTargetCity();
     int newTargetId = getNextRandomTarget(currentTargetId);
-    postman.route = world.getRouteDijkstra(currentTargetId, newTargetId);
-    if (postman.route.empty() ) { std::cerr<<"No path found for: "<<currentTargetId<<std::endl; }
-    postman.currentWaypointIndex = 0;
+    postman.setRoute(world.getRouteDijkstra(currentTargetId, newTargetId));
+    if (postman.hasEmptyRoute() ) { std::cerr<<"No path found for: "<<currentTargetId<<std::endl; }
+    postman.resetWaypointIndex();
 }
 
 int Simulation::getNextRandomTarget(int currentTargetId)
 {
-    int cityCount = world.getNumberOfCities();
+    size_t cityCount = world.getNumberOfCities();
 
     if (cityCount <= 1) {
         return currentTargetId;
