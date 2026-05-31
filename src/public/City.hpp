@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cmath>
 #include <SFML/System/Vector2.hpp>
 
 class City {
@@ -19,3 +20,10 @@ struct Road {
     int toCityId;
     float length;
 };
+
+inline float distance(const sf::Vector2f& a, const sf::Vector2f& b) {
+    
+    auto dx = b.x - a.x;
+    auto dy = b.y - a.y;
+    return std::sqrt(dx * dx + dy * dy);
+}

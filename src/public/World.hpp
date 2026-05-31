@@ -14,7 +14,7 @@ public:
 
     void addCity(const std::string& name, sf::Vector2f pos);
     void addRoad(int fromId, int toId);
-    void addPostman(Postman::PColor color, sf::Vector2f startPosition = {0,0});
+    void addPostman(Postman::PColor color, sf::Vector2f startPosition = {0,0}, NavigatorType navType = NavigatorType::Dijkstra);
     
     size_t getNumberOfCities() const { return cities.size(); }
     const City& getCity(int id) const { return cities.at(id); }
@@ -24,12 +24,8 @@ public:
     std::vector<Postman>& getPostmen() { return postmen; }
     const std::vector<Postman>& getPostmen() const { return postmen; }
 
-    std::vector<int> getRouteDijkstra (int fromId, int toId);
-
 private:
     std::vector<City> cities;
     std::vector<std::vector<Road>> roads;// aka Adjacency List
     std::vector<Postman> postmen;
-
-    std::vector<int> reconstructPath(int toId, const std::vector<int>& parent);
 };

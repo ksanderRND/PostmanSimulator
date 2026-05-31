@@ -1,12 +1,7 @@
 #include "World.hpp"
 
 #include <cassert>
-#include <limits>
-#include <queue>
 #include <iostream>
-#include <algorithm>
-
-constexpr int NO_PARENT = -1;
 
 void World::addCity(const std::string &name, sf::Vector2f pos)
 {
@@ -30,66 +25,9 @@ void World::addRoad(int fromId, int toId)
     roads[toId].push_back({fromId, dist});
 }
 
-void World::addPostman(Postman::PColor color, sf::Vector2f startPosition)
+void World::addPostman(Postman::PColor color, sf::Vector2f startPosition, NavigatorType navType)
 {
-    postmen.push_back({color, startPosition});
-}
-
-std::vector<int> World::getRouteDijkstra (int fromId, int toId)
-{
-    if((fromId < 0) || (fromId >= cities.size()) || (toId < 0) || (toId >= cities.size()) ){
-        std::cerr<<"path out of range!"<<std::endl;
-        return {};
-    }
-
-    if (fromId == toId) {
-        return {fromId};
-    }
-
-    size_t n = cities.size();
-    std::vector<float> distances(n, std::numeric_limits<float>::infinity());
-    std::vector<int> previous(n, NO_PARENT);
-    std::priority_queue<std::pair<float, int>,
-                                    std::vector<std::pair<float, int>>,
-                                    std::greater<>> pq;
-
-    distances[fromId] = 0.0f;
-    pq.push({0.0f, fromId});
-
-    while (!pq.empty()) {
-        auto [currentDist, current] = pq.top();
-        pq.pop();
-
-        if (current == toId) {
-            return reconstructPath(toId, previous);
-        }
-
-        if (currentDist > distances[current]) {
-            continue;
-        }
-
-        for (const Road& road : roads[current]) {
-            float newDist = distances[current] + road.length;
-
-            if (newDist < distances[road.toCityId]) {
-                distances[road.toCityId] = newDist;
-                previous[road.toCityId] = current;
-                pq.push({newDist, road.toCityId});
-            }
-        }
-    }
-
-    return {};
-}
-
-std::vector<int> World::reconstructPath(int toId, const std::vector<int>& parent) 
-{
-    std::vector<int> path;
-    for (int node = toId; node != NO_PARENT; node = parent[node]) {
-        path.push_back(node);
-    }
-    std::reverse(path.begin(), path.end());
-    return path;
+    postmen.push_back({color, startPosition, navType});
 }
 
 void World::initializeWithTestSample()
@@ -148,6 +86,8 @@ void World::initializeWithTestSample()
     // Shortcut bypassing left cluster
     addRoad(0, 3);
 
-    addPostman(Postman::PColor::Blue, cities[0].getPosition());
-    addPostman(Postman::PColor::Green, cities[0].getPosition());
+    addPostman(Postman::PColor::Blue,   cities[0].getPosition(), NavigatorType::Dijkstra);
+    addPostman(Postman::PColor::Green,  cities[0].getPosition(), NavigatorType::AStar);
+    addPostman(Postman::PColor::Red,    cities[0].getPosition(), NavigatorType::BFS);
+    addPostman(Postman::PColor::Yellow, cities[0].getPosition(), NavigatorType::DFS);
 }

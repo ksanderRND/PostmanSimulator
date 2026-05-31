@@ -1,7 +1,6 @@
 #include "Simulation.hpp"
 #include "Config.hpp"
 
-#include <chrono>
 #include <iostream>
 
 Simulation::Simulation(World &world): 
@@ -30,7 +29,7 @@ void Simulation::updatePostman(Postman& postman, float dt) {
 void Simulation::givePostmanNextRoute(Postman& postman) {
     int currentTargetId = postman.getTargetCity();
     int newTargetId = getNextRandomTarget(currentTargetId);
-    postman.setRoute(world.getRouteDijkstra(currentTargetId, newTargetId));
+    postman.setRoute(postman.getNavigator().findRoute(world, currentTargetId, newTargetId));
     if (postman.hasEmptyRoute() ) { std::cerr<<"No path found for: "<<currentTargetId<<std::endl; }
     postman.resetWaypointIndex();
 }

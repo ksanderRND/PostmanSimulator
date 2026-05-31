@@ -1,6 +1,6 @@
 #include "Postman.hpp"
 
-Postman::Postman(PColor pColor, sf::Vector2f startPosition): position(startPosition)
+Postman::Postman(PColor pColor, sf::Vector2f startPosition, NavigatorType navType): position(startPosition), navigator(Navigator::create(navType))
 {
     switch (pColor)
     {
@@ -25,7 +25,7 @@ Postman::Postman(PColor pColor, sf::Vector2f startPosition): position(startPosit
 int Postman::getCurrentWaypointId() const
 {
     if(hasEmptyRoute()) return 0;
-    return isRouteComplete() ? route.front() : route[currentWaypointIndex];
+    return isRouteComplete() ? route.back() : route[currentWaypointIndex];
 }
 
 int Postman::getTargetCity() const
