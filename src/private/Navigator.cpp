@@ -32,7 +32,7 @@ std::vector<int> DijkstraNavigator::findRoute(const World& world, int fromId, in
 
     size_t n = world.getNumberOfCities();
 
-    if((fromId < 0) || (fromId >= n) || (toId < 0) || (toId >= n) ) return {};
+    if (fromId < 0 || fromId >= (int)n || toId < 0 || toId >= (int)n) return {};
     if (fromId == toId) return {fromId};
 
     std::vector<float> distances(n, std::numeric_limits<float>::infinity());

@@ -4,31 +4,37 @@
 #include <iostream>
 
 Simulation::Simulation(World &world): 
-    world(world), 
-    rng(std::random_device{}()) {}
+    world(world), rng(std::random_device{}()) {
 
+        sf::Vector2f startPosition = (world.getNumberOfCities() > 0) ? world.getCityPosition(0) : sf::Vector2f {0.0, 0.0};
+        postmen.push_back({sf::Color::Green,  startPosition, NavigatorType::AStar});
+        postmen.push_back({sf::Color::Blue,   startPosition, NavigatorType::Dijkstra});
+        postmen.push_back({sf::Color::Yellow, startPosition, NavigatorType::DFS});
+        postmen.push_back({sf::Color::Red,    startPosition, NavigatorType::BFS});
+    }
 
 void Simulation::update(float dt)
 {
-    for (auto& postman : world.getPostmen()) {
-        updatePostman(postman, dt);
+    bool allArrived = true;
+
+    for (auto& postman : postmen) {
+        if (postman.hasEmptyRoute() || postman.isRouteComplete()) {
+            continue;
+        }
+        allArrived = false;
+        postman.moveTowards(world.getCityPosition(postman.getCurrentWaypointId()), dt);
+    }
+
+    if (allArrived) {
+        startCityId = targetCityId;
+        targetCityId = getNextRandomTarget(startCityId);
+        for (auto& postman : postmen) {
+            givePostmanNextRoute(postman, startCityId, targetCityId);
+        }
     }
 }
 
-void Simulation::updatePostman(Postman& postman, float dt) {
-
-    if( postman.hasEmptyRoute() || postman.isRouteComplete() ) {
-        givePostmanNextRoute(postman);
-        return;
-    }
-
-    int waypointId = postman.getCurrentWaypointId();
-    postman.moveTowards(world.getCityPosition(waypointId), dt);
-}
-
-void Simulation::givePostmanNextRoute(Postman& postman) {
-    int currentTargetId = postman.getTargetCity();
-    int newTargetId = getNextRandomTarget(currentTargetId);
+void Simulation::givePostmanNextRoute(Postman& postman, int currentTargetId, int newTargetId) {
     postman.setRoute(postman.getNavigator().findRoute(world, currentTargetId, newTargetId));
     if (postman.hasEmptyRoute() ) { std::cerr<<"No path found for: "<<currentTargetId<<std::endl; }
     postman.resetWaypointIndex();

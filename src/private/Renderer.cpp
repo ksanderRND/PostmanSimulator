@@ -13,11 +13,11 @@ bool Renderer::loadFont() {
     return font.loadFromFile(Config::FONT_PATH);
 }
 
-void Renderer::render(sf::RenderWindow &window, const World &world) {
+void Renderer::render(sf::RenderWindow &window, const World &world, const std::vector<Postman>& postmen) {
     for (size_t i=0; i < world.getNumberOfCities(); i++) {
         drawCityWithRoads(window, world, i);
     }
-    drawPostmen(window, world);
+    drawPostmen(window, world, postmen);
 }
 
 void Renderer::drawCityWithRoads(sf::RenderWindow & window, const World &world, const int cityId) {
@@ -62,11 +62,16 @@ void Renderer::drawCity(sf::RenderWindow& window, const sf::Vector2f& position, 
     }
 }
 
-void Renderer::drawPostmen(sf::RenderWindow& window, const World& world) {
-    for (const auto& postman : world.getPostmen()) {
+void Renderer::drawPostmen(sf::RenderWindow& window, const World& world, const std::vector<Postman>& postmen) {
+    if (!postmen.empty() && !postmen.front().hasEmptyRoute()) {
+        int targetCity = postmen.front().getTargetCity();
+        highlightDestinationCity(window, world.getCityPosition(targetCity));
+    }
+    for (const auto& postman : postmen) {
         highlightPostmansPath(window, world, postman);
-        sf::CircleShape shape(Config::POSTMAN_RADIUS);
-        shape.setOrigin({Config::POSTMAN_RADIUS, Config::POSTMAN_RADIUS});
+        float radius =Config::POSTMAN_RADIUS + static_cast<int>(postman.getNavigator().getNavigatorType()) * Config::PIXEL_MULTIPLIER;
+        sf::CircleShape shape(radius);
+        shape.setOrigin({radius, radius});
         shape.setPosition(postman.getPosition());
         shape.setFillColor(postman.getColor());
         window.draw(shape);
@@ -78,7 +83,7 @@ void Renderer::highlightPostmansPath(sf::RenderWindow &window, const World &worl
     if(path.empty()) { return; }
 
     int type = static_cast<int>(postman.getNavigator().getNavigatorType());
-    float offset = (type - Config::PATH_LINE_OFFSET) * Config::PATH_LINE_SPACING;
+    float offset = (type - Config::PATH_LINE_OFFSET) * Config::PIXEL_MULTIPLIER;
 
     for(size_t i = 0; i+1<path.size(); i++) {
         const auto& from = world.getCityPosition(path[i]);
@@ -93,16 +98,14 @@ void Renderer::highlightPostmansPath(sf::RenderWindow &window, const World &worl
 
         drawRoad(window, offsetFrom, offsetTo, postman.getColor());
     }
-    int targetCity = postman.getTargetCity();
-    highlightDestinationCity(window, world.getCityPosition(targetCity), postman.getColor());
 }
 
-void Renderer::highlightDestinationCity(sf::RenderWindow& window, const sf::Vector2f& position, const sf::Color& postmansColor) {
+void Renderer::highlightDestinationCity(sf::RenderWindow& window, const sf::Vector2f& position) {
     sf::CircleShape shape(Config::CITY_RADIUS);
     shape.setOrigin({Config::CITY_RADIUS, Config::CITY_RADIUS});
     shape.setPosition(position);
     shape.setFillColor(sf::Color::Magenta);
-    shape.setOutlineColor(postmansColor);
+    shape.setOutlineColor(sf::Color::Black);
     shape.setOutlineThickness(Config::DEST_CITY_OUTLINE);
     window.draw(shape);
 }

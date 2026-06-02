@@ -7,10 +7,10 @@
 class World;
 
 enum class NavigatorType {
+    BFS,
+    DFS,
     Dijkstra,
     AStar,
-    BFS,
-    DFS
 };
 
 class Navigator {

@@ -1,15 +1,11 @@
 #include "Application.hpp"
 
-#include <iostream>
-
 Application::Application(): simulation(world) {
     window.create(sf::VideoMode(Config::WINDOW_WIDTH, Config::WINDOW_HEIGHT), Config::WINDOW_TITLE);
     window.setVerticalSyncEnabled(true);
     if (!window.isOpen()) {
         throw std::runtime_error("Failed to create render window.");
     }
-
-    world.initializeWithTestSample();
 }
 
 void Application::run() {
@@ -23,7 +19,7 @@ void Application::run() {
         simulation.update(dt);
 
         window.clear(Config::BACKGROUND_COLOR);
-        renderer.render(window, world);
+        renderer.render(window, world, simulation.getPostmen());
         window.display();
     }
 }

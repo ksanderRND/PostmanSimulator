@@ -3,6 +3,11 @@
 #include <cassert>
 #include <iostream>
 
+World::World()
+{
+    initializeWithTestSample();
+}
+
 void World::addCity(const std::string &name, sf::Vector2f pos)
 {
     cities.push_back({name, pos});
@@ -23,11 +28,6 @@ void World::addRoad(int fromId, int toId)
     float dist = distance(cities[fromId].getPosition(), cities[toId].getPosition());
     roads[fromId].push_back({toId, dist});
     roads[toId].push_back({fromId, dist});
-}
-
-void World::addPostman(Postman::PColor color, sf::Vector2f startPosition, NavigatorType navType)
-{
-    postmen.push_back({color, startPosition, navType});
 }
 
 void World::initializeWithTestSample()
@@ -85,9 +85,4 @@ void World::initializeWithTestSample()
 
     // Shortcut bypassing left cluster
     addRoad(0, 3);
-
-    addPostman(Postman::PColor::Blue,   cities[0].getPosition(), NavigatorType::Dijkstra);
-    addPostman(Postman::PColor::Green,  cities[0].getPosition(), NavigatorType::AStar);
-    addPostman(Postman::PColor::Red,    cities[0].getPosition(), NavigatorType::BFS);
-    addPostman(Postman::PColor::Yellow, cities[0].getPosition(), NavigatorType::DFS);
 }

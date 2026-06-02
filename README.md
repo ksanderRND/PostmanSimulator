@@ -1,11 +1,9 @@
 # PostmanSimulator
 
-Pathfinding visualization built with C++17 and SFML 2.6. A postman navigates a connected weighted graph of cities, where all roads are bidirectional and weighted by Euclidean distance. The shortest route between cities is computed using Dijkstra's algorithm and rendered in real-time.
+Pathfinding visualization built with C++17 and SFML 2.6. Multiple postmen race across a connected weighted graph of cities, each using a different pathfinding algorithm (BFS, DFS, Dijkstra, A*). All roads are bidirectional and weighted by Euclidean distance. Routes are computed and rendered in real-time, showing how algorithms compare on the same source–destination pair.
 
 ## Roadmap
 
-- **Navigator module** — extract pathfinding from `World` into a dedicated class with a strategy interface
-- **Additional algorithms** — BFS, DFS, and A* as pathfinding strategies
 - **Map loading** — read city/road layouts from file instead of hardcoded test data
 
 ## Third-party assets

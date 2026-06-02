@@ -16,7 +16,7 @@ namespace Config {
     constexpr float CITY_OUTLINE = 2.0f;
     constexpr float DEST_CITY_OUTLINE = 2.0f;
     constexpr float PATH_LINE_OFFSET = 1.5f;
-    constexpr float PATH_LINE_SPACING = 2.0f;
+    constexpr float PIXEL_MULTIPLIER = 2.0f;
     constexpr unsigned TEXT_SIZE = 14;
     constexpr float LABEL_Y_OFFSET = -25.0f;
     constexpr const char* FONT_PATH = "Arimo-Regular.ttf";

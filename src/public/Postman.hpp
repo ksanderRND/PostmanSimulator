@@ -9,11 +9,7 @@
 
 class Postman {
 public:
-
-    enum class PColor{ Red, Green, Blue, Yellow };
-
-    Postman(PColor pColor, sf::Vector2f startPosition, 
-        NavigatorType navType = NavigatorType::Dijkstra);
+    Postman(sf::Color pColor, sf::Vector2f startPosition, NavigatorType navType);
 
     const sf::Vector2f& getPosition() const { return position; }
     const std::vector<int>& getRoute() const { return route; }

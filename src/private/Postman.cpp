@@ -1,26 +1,7 @@
 #include "Postman.hpp"
 
-Postman::Postman(PColor pColor, sf::Vector2f startPosition, NavigatorType navType): position(startPosition), navigator(Navigator::create(navType))
-{
-    switch (pColor)
-    {
-    case PColor::Red:
-        color = sf::Color::Red;
-        break;
-    case PColor::Green:
-        color = sf::Color::Green;
-        break;
-    case PColor::Blue:
-        color = sf::Color::Blue;
-        break;
-    case PColor::Yellow:
-        color = sf::Color::Yellow;
-        break;
-    default:
-        color = sf::Color::Red;
-        break;
-    }
-}
+Postman::Postman(sf::Color pColor, sf::Vector2f startPosition, NavigatorType navType): 
+    color(pColor), position(startPosition), navigator(Navigator::create(navType)) {}
 
 int Postman::getCurrentWaypointId() const
 {
